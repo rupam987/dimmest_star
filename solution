@@ -1,0 +1,82 @@
+package com;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+public class Graph {
+
+	private int noOfVertices;
+	private Map<Integer,List<Integer>> AdjList=new HashMap<>();
+
+	Graph(int noOfVertices) {
+		this.noOfVertices = noOfVertices;
+		//AdjList = new LinkedList[noOfVertices]; 
+		for (int i=1; i<=noOfVertices; ++i) 
+			AdjList.put(i, new ArrayList<Integer>());
+	}
+
+	void addEdge(int v,int w){ 
+		AdjList.get(v).add(w); 
+	}
+
+	int bfs(int startingNode) {
+		int value[]=new int[noOfVertices+1];
+		boolean visited[] = new boolean[noOfVertices+1];
+
+		LinkedList<Integer> queue = new LinkedList<Integer>();
+		visited[startingNode] = true;
+		queue.add(startingNode);
+		value[startingNode] = 0;
+		int min=startingNode;
+
+		while (!queue.isEmpty()) {
+			int getQueueElement = queue.poll();
+			int count = value[getQueueElement] +1;
+
+			List<Integer> get_List = AdjList.get(getQueueElement);
+
+			for (int i : get_List) {
+				int neigh = i;
+
+				if (!visited[neigh]) {
+					visited[neigh] = true;
+					value[neigh] = count;
+					if(value[neigh] > value[min]) {
+						min = neigh;
+						
+					}
+					if(value[neigh] == value[min]) {
+						if(min > neigh) 
+							min = neigh;
+					}
+					//System.out.println(neigh+" "+ count+" "+min);
+					queue.add(neigh);
+				}
+			}
+		}
+		return min;
+	}
+
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		int testCases = sc.nextInt();
+
+		for(int i=0;i<testCases;i++){
+			int stars=sc.nextInt();
+			Graph g = new Graph(stars);
+
+			for (int j = 0; j < stars-1; j++) {
+				int begin=sc.nextInt();
+				int end=sc.nextInt();
+				g.addEdge(begin, end);
+			}	
+			int root=sc.nextInt();
+			int res = g.bfs(root);
+			System.out.println(res);
+		}
+	}
+}
